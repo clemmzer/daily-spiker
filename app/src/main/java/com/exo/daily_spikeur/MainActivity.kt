@@ -66,7 +66,7 @@ fun ScaffoldWithBottomNav() {
                 actions = {
                     IconButton(onClick = { /* Action à exécuter quand on clique sur l'image */ }) {
                         Image(
-                            painter = painterResource(id = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7), // Remplacez par votre image
+                            painter = painterResource(id = R.drawable.honor_gambier), // Remplacez par votre image
                             contentDescription = "Profile Image",
                             modifier = Modifier.size(50.dp) // Taille de l'image
                         )
