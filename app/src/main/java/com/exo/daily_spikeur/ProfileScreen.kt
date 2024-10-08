@@ -24,13 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.exo.daily_spikeur.ui.theme.DailyspikeurTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+
 
 import com.exo.daily_spikeur.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(viewModel: UserProfileViewModel) {
+fun UserProfileScreen(viewModel: UserProfileViewModel,navController: NavController) {
     val profileImageResId = viewModel.profileImageResId.value
     Column(
         modifier = Modifier
@@ -93,10 +96,10 @@ fun UserProfileScreen(viewModel: UserProfileViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            PooperItem(imageResId = R.drawable.legendary_5) { viewModel.changeProfileImage(R.drawable.legendary_5) }
-            PooperItem(imageResId = R.drawable.honor_millat) { viewModel.changeProfileImage(R.drawable.honor_millat) }
-            PooperItem(imageResId = R.drawable.legendary_4) { viewModel.changeProfileImage(R.drawable.legendary_4) }
-            PooperItem(isGetMore = true) // Dernier item pour "Get More Poopers"
+            PooperItem(imageResId = R.drawable.legendary_5, navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_5) }
+            PooperItem(imageResId = R.drawable.honor_millat,navController = navController) { viewModel.changeProfileImage(R.drawable.honor_millat) }
+            PooperItem(imageResId = R.drawable.legendary_4,navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_4) }
+            PooperItem(isGetMore = true,navController = navController) // Dernier item pour "Get More Poopers"
         }
     }
 }
@@ -122,13 +125,13 @@ fun StatCard(label: String, value: String) {
 }
 
 @Composable
-fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null, onClick: () -> Unit = {}) {
+fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, onClick: () -> Unit = {}) {
     if (isGetMore) {
         // Afficher le bouton "Get More Poopers"
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .clickable { onClick() } // Appelle onClick si c'est "Get More"
+                .clickable {  navController.navigate("reward") } // Appelle onClick si c'est "Get More"
                 .padding(4.dp),
             contentAlignment = Alignment.Center // Centre le contenu
         ) {
@@ -161,6 +164,7 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null, onClick: () 
 @Composable
 fun UserProfileScreenPreview() {
     DailyspikeurTheme {
-        UserProfileScreen(viewModel())
+        val navController = rememberNavController()
+        UserProfileScreen(viewModel(), navController)
     }
 }

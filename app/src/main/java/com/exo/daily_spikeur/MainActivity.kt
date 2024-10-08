@@ -126,7 +126,7 @@ fun ScaffoldWithBottomNav() {
         ) {
             composable("map") { MapScreen() }
             composable("reward") { RewardScreen() } // Écran des récompenses
-            composable("profile") { UserProfileScreen(viewModel)  }
+            composable("profile") { UserProfileScreen(viewModel, navController)  }
             composable("ranking") { RankingScreen()  }
         }
     }
