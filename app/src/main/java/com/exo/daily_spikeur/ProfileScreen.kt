@@ -104,7 +104,7 @@ fun UserProfileScreen() {
         ) {
             PooperItem(imageResId = R.drawable.legendary_5) { profileImageResId.value = R.drawable.legendary_5 }
             PooperItem(imageResId = R.drawable.honor_millat) { profileImageResId.value = R.drawable.honor_millat }
-            PooperItem(imageResId = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7) { profileImageResId.value = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7 }
+            PooperItem(imageResId = R.drawable.honor_gambier) { profileImageResId.value = R.drawable.honor_gambier }
             PooperItem(isGetMore = true) // Dernier item pour "Get More Poopers"
         }
     }

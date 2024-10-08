@@ -63,7 +63,7 @@ fun RankingScreen() {
         LazyColumn {
             item { RankingItem(name = "CLEMZER", points = "30000 POOPPOINTS (PP)", imageResId = R.drawable.honor_mabile) }
             item { RankingItem(name = "Erwan", points = "29999 POOPPOINTS (PP)", imageResId = R.drawable.legendary_2) }
-            item { RankingItem(name = "LIES", points = "2888 POOPPOINTS (PP)", imageResId = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7) }
+            item { RankingItem(name = "LIES", points = "2888 POOPPOINTS (PP)", imageResId = R.drawable.honor_gambier) }
             item { RankingItem(name = "YOLO WARRIOR", points = "20000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_6) }
             item { RankingItem(name = "SYNTAX", points = "18000 POOPPOINTS (PP)", imageResId = R.drawable.honor_millat) }
             item { RankingItem(name = "OTHEMGETTO", points = "10000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_5) }
