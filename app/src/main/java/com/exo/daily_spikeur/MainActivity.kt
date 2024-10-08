@@ -1,5 +1,6 @@
 package com.exo.daily_spikeur
 
+import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
