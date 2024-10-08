@@ -1,5 +1,6 @@
 package com.exo.daily_spikeur
 
+import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 class MainActivity : ComponentActivity() {
@@ -52,6 +54,7 @@ fun ScaffoldWithBottomNav() {
     )
     val selectedIndex = remember { mutableStateOf(0) }
     val navController = rememberNavController() // Déplacer ici pour l'utiliser partout
+    val viewModel: UserProfileViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -71,7 +74,7 @@ fun ScaffoldWithBottomNav() {
                 actions = {
                     IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
-                            painter = painterResource(id = R.drawable.honor_gambier), // Remplacez par votre image
+                            painter = painterResource(id = viewModel.profileImageResId.value), // Remplacez par votre image
                             contentDescription = "Profile Image",
                             modifier = Modifier.size(50.dp) // Taille de l'image
                         )
@@ -116,6 +119,7 @@ fun ScaffoldWithBottomNav() {
             }
         }
     ) { innerPadding ->
+        val viewModel: UserProfileViewModel = viewModel()
         NavHost(
             navController = navController,
             startDestination = "map",
@@ -123,7 +127,7 @@ fun ScaffoldWithBottomNav() {
         ) {
             composable("map") { MapScreen() }
             composable("reward") { RewardScreen() } // Écran des récompenses
-            composable("profile") { UserProfileScreen()  }
+            composable("profile") { UserProfileScreen(viewModel)  }
             composable("ranking") { RankingScreen()  }
         }
     }

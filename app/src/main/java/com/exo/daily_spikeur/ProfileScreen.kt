@@ -1,5 +1,6 @@
 package com.exo.daily_spikeur
 
+import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,25 +23,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.exo.daily_spikeur.ui.theme.DailyspikeurTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 import com.exo.daily_spikeur.R
 
-class UserProfileActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            DailyspikeurTheme {
-                UserProfileScreen()
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen() {
-    val profileImageResId = remember { mutableStateOf(R.drawable.base_3) } // Image de profil par défaut
-
+fun UserProfileScreen(viewModel: UserProfileViewModel) {
+    val profileImageResId = viewModel.profileImageResId.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +41,7 @@ fun UserProfileScreen() {
     ) {
         // Image de Profil
         Image(
-            painter = painterResource(id = profileImageResId.value),
+            painter = painterResource(id = profileImageResId),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(100.dp)
@@ -102,9 +93,9 @@ fun UserProfileScreen() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            PooperItem(imageResId = R.drawable.legendary_5) { profileImageResId.value = R.drawable.legendary_5 }
-            PooperItem(imageResId = R.drawable.honor_millat) { profileImageResId.value = R.drawable.honor_millat }
-            PooperItem(imageResId = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7) { profileImageResId.value = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7 }
+            PooperItem(imageResId = R.drawable.legendary_5) { viewModel.changeProfileImage(R.drawable.legendary_5) }
+            PooperItem(imageResId = R.drawable.honor_millat) { viewModel.changeProfileImage(R.drawable.honor_millat) }
+            PooperItem(imageResId = R.drawable.legendary_4) { viewModel.changeProfileImage(R.drawable.legendary_4) }
             PooperItem(isGetMore = true) // Dernier item pour "Get More Poopers"
         }
     }
@@ -132,18 +123,37 @@ fun StatCard(label: String, value: String) {
 
 @Composable
 fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null, onClick: () -> Unit = {}) {
-    val displayedImageResId = imageResId ?: R.drawable.base_3 // Remplacez par vos images
-    Box(
-        modifier = Modifier
-            .size(80.dp)
-            .clickable { onClick() }
-            .padding(4.dp)
-    ) {
-        Image(
-            painter = painterResource(id = displayedImageResId),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize()
-        )
+    if (isGetMore) {
+        // Afficher le bouton "Get More Poopers"
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { onClick() } // Appelle onClick si c'est "Get More"
+                .padding(4.dp),
+            contentAlignment = Alignment.Center // Centre le contenu
+        ) {
+            // Afficher du texte pour "Get More"
+            Text(
+                text = "Get More",
+                color = Color.Black,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    } else {
+        // Afficher l'image de pooper
+        val displayedImageResId = imageResId ?: R.drawable.base_3 // Image par défaut
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { onClick() } // Appelle onClick pour changer l'image de profil
+                .padding(4.dp)
+        ) {
+            Image(
+                painter = painterResource(id = displayedImageResId),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -151,6 +161,6 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null, onClick: () 
 @Composable
 fun UserProfileScreenPreview() {
     DailyspikeurTheme {
-        UserProfileScreen()
+        UserProfileScreen(viewModel())
     }
 }
