@@ -1,6 +1,5 @@
 package com.exo.daily_spikeur
 
-import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +21,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import com.exo.daily_spikeur.ui.theme.DailyspikeurTheme
-import com.exo.daily_spikeur.R
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
