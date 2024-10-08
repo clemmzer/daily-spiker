@@ -22,7 +22,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import com.exo.daily_spikeur.ui.theme.DailyspikeurTheme
 import com.exo.daily_spikeur.R
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +45,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ScaffoldWithBottomNav() {
     val icons = listOf(
-        R.drawable.espace_reserve, // Remplacez par vos icônes dans drawable
-        R.drawable.cadeau_de_supermarche,
-        R.drawable.couronner,
-        R.drawable.utilisateur
+        R.drawable.carte, // Remplacez par vos icônes dans drawable
+        R.drawable.cadeaux,
+        R.drawable.podium, // Assurez-vous que c'est bien l'icône de la couronne
+        R.drawable.photo
     )
     val selectedIndex = remember { mutableStateOf(0) }
+    val navController = rememberNavController() // Déplacer ici pour l'utiliser partout
 
     Scaffold(
         topBar = {
@@ -64,7 +69,7 @@ fun ScaffoldWithBottomNav() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Action à exécuter quand on clique sur l'image */ }) {
+                    IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
                             painter = painterResource(id = R.drawable.pixlr_image_generator_d67c81b7_60aa_4cb1_99bf_18a3bce76ea7), // Remplacez par votre image
                             contentDescription = "Profile Image",
@@ -85,27 +90,47 @@ fun ScaffoldWithBottomNav() {
                             Image(
                                 painter = painterResource(id = icon),
                                 contentDescription = null,
-                                modifier = Modifier.size(50.dp) // Taille de l'icône
+                                modifier = Modifier.size(40.dp) // Taille de l'icône
                             )
                         },
-                        selected = selectedIndex.value == index,
-                        onClick = { selectedIndex.value = index },
+
+                        selected = selectedIndex.value == index, onClick = {
+
+                            selectedIndex.value = index
+                            when (index) {
+                                0 -> navController.navigate("map") // Écran d'accueil
+                                1 -> navController.navigate("reward") // Écran des récompenses
+                                2 -> navController.navigate("ranking") // Écran de classement
+                                3 -> navController.navigate("profile") // Écran de profil
+                                // Ajoutez d'autres redirections ici si nécessaire
+                                else -> navController.navigate("map") // Redirection par défaut
+                            }
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color.White, // Couleur de l'icône sélectionnée
                             unselectedIconColor = Color.White, // Couleur de l'icône non sélectionnée
                             indicatorColor = Color.Transparent
-                        ),
+                        )
                     )
                 }
             }
         }
     ) { innerPadding ->
-        Greeting(
-            name = "Android",
+        NavHost(
+            navController = navController,
+            startDestination = "map",
             modifier = Modifier.padding(innerPadding)
-        )
+        ) {
+            composable("map") { MapScreen() }
+            composable("reward") { RewardScreen() } // Écran des récompenses
+            composable("profile") { UserProfileScreen()  }
+            composable("ranking") { RankingScreen()  }
+        }
     }
 }
+
+
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
