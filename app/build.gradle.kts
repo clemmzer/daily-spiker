@@ -61,8 +61,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation ("androidx.navigation:navigation-compose:2.8.0")
 
-    implementation("com.google.maps.android:maps-compose:2.7.0")
-    implementation("com.google.android.gms:play-services-maps:17.0.1")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.gms:play-services-base:18.0.1")
+    implementation ("com.google.maps.android:maps-compose:2.11.2")
+    implementation ("com.google.accompanist:accompanist-permissions:0.31.3-beta")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

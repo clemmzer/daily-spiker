@@ -1,6 +1,9 @@
 package com.exo.daily_spikeur
 
+
 import CreatePoopAccountScreen
+import MapScreen
+
 import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -55,6 +59,8 @@ fun ScaffoldWithBottomNav() {
     val selectedIndex = remember { mutableStateOf(0) }
     val navController = rememberNavController() // Déplacer ici pour l'utiliser partout
     val viewModel: UserProfileViewModel = viewModel()
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
