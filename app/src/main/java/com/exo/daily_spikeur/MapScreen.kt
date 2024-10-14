@@ -1,86 +1,111 @@
-package com.exo.daily_spikeur
-
-import androidx.compose.foundation.Image
+import android.content.Context
+import android.graphics.Bitmap
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberCameraPositionState
+import androidx.core.content.ContextCompat
+import com.exo.daily_spikeur.R
+import com.google.android.gms.maps.model.*
+import com.google.maps.android.compose.*
 
 @Composable
 fun MapScreen() {
+    val lille = LatLng(50.633333, 3.066667)  // Coordonnées d'un lieu (ici Singapour)
+
+    // Configuration de la caméra
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(lille, 15f)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-
-        // Carte Google
-        val cameraPositionState = rememberCameraPositionState()
-
-       /* GoogleMap(
+        GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
-            // Ajoutez vos marqueurs ici, exemple :
-            Marker(
-              //  position = 23* Position GPS de votre marqueur
-                title = "Poop Location"
+            MapMarker(
+                position = lille,
+                title = "Gambier",
+                context = LocalContext.current,
+                iconResourceId = R.drawable.honor_gambier
             )
-        }*/
-
+        }
         // Texte centré sur la carte
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 100.dp),
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Premier texte
-            Text(
-                text = "FIND YOUR POOP",
-                fontFamily = FontFamily(Font(R.font.test)), // Utiliser la police Rubik Bubbles
-                color = Color(0xFF8B4513), // Couleur marron
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            // Deuxième texte
-            Text(
-                text = "LESS BLA-BLA MORE POOPING",
-                fontFamily = FontFamily(Font(R.font.test)),
-                color = Color(0xFF8B4513),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-
-        // Image "Poopy" en bas à gauche
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.like), // Remplacer par votre image de Poopy
-                contentDescription = "Poopy Icon",
-                modifier = Modifier.size(80.dp),
-                contentScale = ContentScale.Fit
-            )
-
-            // Texte du nombre de poops en bas à droite
-            Text(
-                text = "12 Poopy's",
-                fontFamily = FontFamily(Font(R.font.test)),
-                color = Color(0xFF8B4513),
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Card (
+                shape = RoundedCornerShape(30.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(237, 225, 225),
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ),
+            ) {
+                Text(
+                    text = "FIND YOUR POOP",
+                    fontFamily = FontFamily(Font(R.font.test)),
+                    color = Color(0xFF8B4513),
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                )
+            }
         }
     }
+}
+
+@Composable
+fun MapMarker(
+    context: Context,
+    position: LatLng,
+    title: String,
+    @DrawableRes iconResourceId: Int
+) {
+    val icon = bitmapDescriptorFromVector(
+        context, iconResourceId
+    )
+
+    Marker(
+        state = MarkerState(position = position),
+        title = title,
+        icon = icon,
+    )
+}
+
+fun bitmapDescriptorFromVector(
+    context: Context,
+    vectorResId: Int,
+): BitmapDescriptor? {
+
+    // retrieve the actual drawable
+    val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
+    val width = 100
+    val height = 100
+    drawable.setBounds(0, 0, width, height)
+    val bm = Bitmap.createBitmap(
+        100,
+        100,
+        Bitmap.Config.ARGB_8888
+    )
+
+    // draw it onto the bitmap
+    val canvas = android.graphics.Canvas(bm)
+    drawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bm)
 }
