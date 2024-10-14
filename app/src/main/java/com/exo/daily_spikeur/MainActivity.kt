@@ -1,6 +1,9 @@
 package com.exo.daily_spikeur
 
+
+import CreatePoopAccountScreen
 import MapScreen
+
 import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -132,6 +135,7 @@ fun ScaffoldWithBottomNav() {
             composable("reward") { RewardScreen() } // Écran des récompenses
             composable("profile") { UserProfileScreen(viewModel, navController)  }
             composable("ranking") { RankingScreen()  }
+            composable("connexion") { CreatePoopAccountScreen()  }
         }
     }
 }

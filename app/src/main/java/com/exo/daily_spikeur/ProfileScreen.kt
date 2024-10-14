@@ -33,7 +33,7 @@ import com.exo.daily_spikeur.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(viewModel: UserProfileViewModel,navController: NavController) {
+fun UserProfileScreen(viewModel: UserProfileViewModel, navController: NavController) {
     val profileImageResId = viewModel.profileImageResId.value
     Column(
         modifier = Modifier
@@ -97,13 +97,30 @@ fun UserProfileScreen(viewModel: UserProfileViewModel,navController: NavControll
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             PooperItem(imageResId = R.drawable.legendary_5, navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_5) }
-            PooperItem(imageResId = R.drawable.honor_millat,navController = navController) { viewModel.changeProfileImage(R.drawable.honor_millat) }
-            PooperItem(imageResId = R.drawable.legendary_4,navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_4) }
-            PooperItem(isGetMore = true,navController = navController) // Dernier item pour "Get More Poopers"
+            PooperItem(imageResId = R.drawable.honor_millat, navController = navController) { viewModel.changeProfileImage(R.drawable.honor_millat) }
+            PooperItem(imageResId = R.drawable.legendary_4, navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_4) }
+            PooperItem(isGetMore = true, navController = navController) // Dernier item pour "Get More Poopers"
+        }
+
+        // Ajouter un espace
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Bouton de redirection vers la page de connexion
+        Button(
+            onClick = { navController.navigate("connexion") }, // Remplacez "login" par le nom de votre route de connexion
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF432818))
+        ) {
+            Text(
+                text = "se deconnecter",
+                color = Color.White,
+                fontFamily = FontFamily(Font(R.font.test))
+            )
         }
     }
 }
-
 @Composable
 fun StatCard(label: String, value: String) {
     Card(
