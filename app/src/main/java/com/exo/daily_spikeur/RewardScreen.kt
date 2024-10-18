@@ -19,20 +19,22 @@ import kotlin.random.Random
 @Composable
 fun RewardScreen() {
     // Gestion des points et de l'image de récompense
-    var points by remember { mutableStateOf(100) } // Remplace par 100 pour simuler l'atteinte du seuil
-    var currentReward by remember { mutableStateOf(R.drawable.base_3) } // Image de profil par défaut
+    var points by remember { mutableStateOf(100000) } // Remplace par 100 pour simuler l'atteinte du seuil
+    var currentReward by remember { mutableStateOf<Int?>(null) } // Image de profil par défaut
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
+            .background(Color(0xFFEDE1DB))
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         // Texte "Your Reward"
         Text(
-            text = "YOUR REWARD",
+            text = "CLICK TO GET REWARD",
             fontFamily = FontFamily(Font(R.font.test)), // Remplacez par votre police
             fontSize = 30.sp,
             color = Color(0xFF916953),
@@ -43,14 +45,15 @@ fun RewardScreen() {
 
         // Image du coffre, clickable si les points atteignent 100
         Image(
-            painter = painterResource(id = if (points >= 100) R.drawable.capture_d_cran_2024_10_06___10_02_58 else R.drawable.couronner),
+            painter = painterResource(id = if (points >= 100) R.drawable.capture_d_cran_2024_10_06___10_02_58 else R.drawable.no_reward),
             contentDescription = "Reward Image",
             modifier = Modifier
                 .size(200.dp)
                 .clickable(enabled = points >= 100) {
                     if (points >= 100) {
+                        showDialog = true
                         currentReward = openChest() // Ouvrir le coffre et obtenir une nouvelle image
-                        points = 0 // Réinitialiser les points après l'ouverture du coffre
+                        points -= 100 // Réinitialiser les points après l'ouverture du coffre
                     }
                 }
         )
@@ -83,11 +86,13 @@ fun RewardScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Affichage de la récompense gagnée
-        Image(
-            painter = painterResource(id = currentReward),
-            contentDescription = "Current Reward Image",
-            modifier = Modifier.size(100.dp)
-        )
+        if (currentReward != null) {
+            PopUpWithImage(
+                imageId = currentReward!!,
+                showDialog = showDialog,
+                closeBtnText = "Keep my Pooper",
+                onDismiss = { showDialog = false })
+        }
     }
 }
 

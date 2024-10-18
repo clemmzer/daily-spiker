@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,13 +35,14 @@ import com.exo.daily_spikeur.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(viewModel: UserProfileViewModel, navController: NavController) {
+fun UserProfileScreen(viewModel: UserProfileViewModel,navController: NavController) {
     val profileImageResId = viewModel.profileImageResId.value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(Color(0xFFEDE1DB)),
+            .background(Color(0xFFEDE1DB))
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Image de Profil
@@ -96,31 +99,14 @@ fun UserProfileScreen(viewModel: UserProfileViewModel, navController: NavControl
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            PooperItem(imageResId = R.drawable.legendary_5, navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_5) }
-            PooperItem(imageResId = R.drawable.honor_millat, navController = navController) { viewModel.changeProfileImage(R.drawable.honor_millat) }
-            PooperItem(imageResId = R.drawable.legendary_4, navController = navController) { viewModel.changeProfileImage(R.drawable.legendary_4) }
-            PooperItem(isGetMore = true, navController = navController) // Dernier item pour "Get More Poopers"
-        }
-
-        // Ajouter un espace
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Bouton de redirection vers la page de connexion
-        Button(
-            onClick = { navController.navigate("connexion") }, // Remplacez "login" par le nom de votre route de connexion
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF432818))
-        ) {
-            Text(
-                text = "se deconnecter",
-                color = Color.White,
-                fontFamily = FontFamily(Font(R.font.test))
-            )
+            PooperItem(imageResId = R.drawable.legendary_5, navController = navController, viewModel = viewModel)
+            PooperItem(imageResId = R.drawable.honor_millat,navController = navController, viewModel = viewModel)
+            PooperItem(imageResId = R.drawable.legendary_4,navController = navController, viewModel = viewModel)
+            PooperItem(isGetMore = true,navController = navController, viewModel = viewModel) // Dernier item pour "Get More Poopers"
         }
     }
 }
+
 @Composable
 fun StatCard(label: String, value: String) {
     Card(
@@ -142,7 +128,9 @@ fun StatCard(label: String, value: String) {
 }
 
 @Composable
-fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, onClick: () -> Unit = {}) {
+fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, viewModel: UserProfileViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+
     if (isGetMore) {
         // Afficher le bouton "Get More Poopers"
         Box(
@@ -165,7 +153,7 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .clickable { onClick() } // Appelle onClick pour changer l'image de profil
+                .clickable { showDialog = true }
                 .padding(4.dp)
         ) {
             Image(
@@ -173,6 +161,17 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize()
             )
+        }
+
+        if (showDialog) {
+            PopUpWithImage(
+                showDialog = showDialog,
+                imageId = displayedImageResId,
+                closeBtnText = "Choose this one",
+                onDismiss = {
+                    showDialog = false
+                    viewModel.changeProfileImage(displayedImageResId)
+                })
         }
     }
 }
