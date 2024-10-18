@@ -1,10 +1,6 @@
 package com.exo.daily_spikeur
 
-import UserProfileViewModel
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import MainViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,8 +31,8 @@ import com.exo.daily_spikeur.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileScreen(viewModel: UserProfileViewModel,navController: NavController) {
-    val profileImageResId = viewModel.profileImageResId.value
+fun UserProfileScreen(viewModel: MainViewModel,navController: NavController) {
+    val profileImageResId = viewModel.user.value.photo
 
     Column(
         modifier = Modifier
@@ -128,7 +124,7 @@ fun StatCard(label: String, value: String) {
 }
 
 @Composable
-fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, viewModel: UserProfileViewModel) {
+fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, viewModel: MainViewModel) {
     var showDialog by remember { mutableStateOf(false) }
 
     if (isGetMore) {
@@ -170,7 +166,7 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController
                 closeBtnText = "Choose this one",
                 onDismiss = {
                     showDialog = false
-                    viewModel.changeProfileImage(displayedImageResId)
+                    //viewModel.changeProfileImage(displayedImageResId)
                 })
         }
     }

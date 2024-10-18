@@ -2,9 +2,9 @@ package com.exo.daily_spikeur
 
 
 import CreatePoopAccountScreen
+import MainViewModel
 import MapScreen
 
-import UserProfileViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,24 +32,79 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import com.exo.daily_spikeur.data.datasources.UsersLocalDataSource
+import com.exo.daily_spikeur.data.datasources.UsersRemoteDataSource
+import com.exo.daily_spikeur.data.datasources.impl.UsersLocalDataSourceImpl
+import com.exo.daily_spikeur.data.datasources.impl.UsersRestDataSourceImpl
+import com.exo.daily_spikeur.data.repositories.UserRepository
+import com.exo.daily_spikeur.data.repositories.impl.UserRepositoryImpl
+import com.exo.daily_spikeur.data.retrofit.ApiService
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            DailyspikeurTheme {
-                ScaffoldWithBottomNav()
-            }
+        startKoin {
+            androidContext(this@MainActivity)
+            modules(repositoryModule,
+                dataSourcesModule,
+                apiService)
         }
+        setContent {
+            val viewModel = viewModel<MainViewModel>(
+                factory =
+                MainViewModel.ViewModelFactory(
+                    get()
+                )
+            )
+            viewModel.getUser()
+            println(R.drawable.honor_mabile)
+            println(viewModel)
+
+            DailyspikeurTheme {
+                ScaffoldWithBottomNav(viewModel)
+            }
+
+        }
+    }
+}
+
+val repositoryModule = module {
+    single<UserRepository> { UserRepositoryImpl(get(), get()) }
+}
+
+val dataSourcesModule = module {
+    single<UsersLocalDataSource> {
+        UsersLocalDataSourceImpl()
+    }
+
+    single<UsersRemoteDataSource> {
+        UsersRestDataSourceImpl(get())
+    }
+}
+
+val apiService = module {
+    single<ApiService> {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://localhost:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        // Valeur de retour
+        retrofit.create(ApiService::class.java)
     }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldWithBottomNav() {
+fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
     val icons = listOf(
         R.drawable.carte, // Remplacez par vos icônes dans drawable
         R.drawable.cadeaux,
@@ -58,7 +113,6 @@ fun ScaffoldWithBottomNav() {
     )
     val selectedIndex = remember { mutableStateOf(0) }
     val navController = rememberNavController() // Déplacer ici pour l'utiliser partout
-    val viewModel: UserProfileViewModel = viewModel()
 
     val context = LocalContext.current
 
@@ -78,9 +132,12 @@ fun ScaffoldWithBottomNav() {
                     }
                 },
                 actions = {
+                    Text(
+                        text = viewModel.user.value.firstname
+                    )
                     IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
-                            painter = painterResource(id = viewModel.profileImageResId.value), // Remplacez par votre image
+                            painter = painterResource(id = viewModel.user.value.photo), // Remplacez par votre image
                             contentDescription = "Profile Image",
                             modifier = Modifier.size(50.dp) // Taille de l'image
                         )
@@ -125,7 +182,7 @@ fun ScaffoldWithBottomNav() {
             }
         }
     ) { innerPadding ->
-        val viewModel: UserProfileViewModel = viewModel()
+        val viewModel: MainViewModel = viewModel()
         NavHost(
             navController = navController,
             startDestination = "map",
