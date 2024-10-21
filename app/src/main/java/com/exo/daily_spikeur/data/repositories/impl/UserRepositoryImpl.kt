@@ -14,7 +14,6 @@ class UserRepositoryImpl(
         return try {
             // Fetch data from the remote data source.
             val response = remoteDataSource.getUser()
-            println(response)
             response
         } catch (e: Exception) {
             // Fetch data from the local data source if an error occurs.

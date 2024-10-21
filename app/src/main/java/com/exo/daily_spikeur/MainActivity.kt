@@ -41,6 +41,7 @@ import com.exo.daily_spikeur.data.repositories.impl.UserRepositoryImpl
 import com.exo.daily_spikeur.data.retrofit.ApiService
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -64,8 +65,6 @@ class MainActivity : ComponentActivity() {
                 )
             )
             viewModel.getUser()
-            println(R.drawable.honor_mabile)
-            println(viewModel)
 
             DailyspikeurTheme {
                 ScaffoldWithBottomNav(viewModel)
@@ -92,7 +91,7 @@ val dataSourcesModule = module {
 val apiService = module {
     single<ApiService> {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://localhost:8080")
+            .baseUrl("https://daily-spiker-api.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -132,9 +131,6 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
                     }
                 },
                 actions = {
-                    Text(
-                        text = viewModel.user.value.firstname
-                    )
                     IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
                             painter = painterResource(id = viewModel.user.value.photo), // Remplacez par votre image
