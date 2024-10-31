@@ -1,13 +1,17 @@
 package com.exo.daily_spikeur
 
 import MainViewModel
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,14 +29,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
-
-import com.exo.daily_spikeur.R
+import com.exo.daily_spikeur.data.models.pooperMap
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreen(viewModel: MainViewModel,navController: NavController) {
-    val profileImageResId = viewModel.user.value.photo
+    val user by viewModel.user
 
     Column(
         modifier = Modifier
@@ -41,47 +44,44 @@ fun UserProfileScreen(viewModel: MainViewModel,navController: NavController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Image de Profil
+
         Image(
-            painter = painterResource(id = profileImageResId),
+            painter = painterResource(id = viewModel.getImageById(user.photo)),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(100.dp)
                 .padding(8.dp)
         )
 
-        // Informations Utilisateur
         Text(
-            text = "NOM Prénom",
+            text = "${user.firstname} ${user.lastname}",
             style = MaterialTheme.typography.titleLarge,
             color = Color(0xFF916953),
             fontFamily = FontFamily(Font(R.font.test))
         )
         Text(
-            text = "#ID123456",
+            text = user.fakeId,
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFF916953),
             fontFamily = FontFamily(Font(R.font.test))
         )
         Text(
-            text = "POOP RANK",
+            text = "POOP RANK : 2",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFF916953),
             fontFamily = FontFamily(Font(R.font.test))
         )
 
-        // Statistiques
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 24.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatCard(label = "TOTAL POOP", value = "12 POOPS")
-            StatCard(label = "POOP POINTS", value = "150")
+            StatCard(label = "TOTAL POOP", value = "${user.poop_count} POOPS")
+            StatCard(label = "POOP POINTS", value = "${user.points}")
         }
 
-        // Poopers
         Text(
             text = "POOPERS",
             style = MaterialTheme.typography.titleMedium,
@@ -90,15 +90,18 @@ fun UserProfileScreen(viewModel: MainViewModel,navController: NavController) {
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        // Grille des Poopers
-        Row(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            PooperItem(imageResId = R.drawable.legendary_5, navController = navController, viewModel = viewModel)
-            PooperItem(imageResId = R.drawable.honor_millat,navController = navController, viewModel = viewModel)
-            PooperItem(imageResId = R.drawable.legendary_4,navController = navController, viewModel = viewModel)
-            PooperItem(isGetMore = true,navController = navController, viewModel = viewModel) // Dernier item pour "Get More Poopers"
+            items(user.poopers.size) { index ->
+                val pooperId = user.poopers[index]
+                PooperItem(pooperId = pooperId, navController = navController, viewModel = viewModel)
+            }
+
+            item {
+                PooperItem(isGetMore = true, navController = navController, viewModel = viewModel)
+            }
         }
     }
 }
@@ -124,19 +127,17 @@ fun StatCard(label: String, value: String) {
 }
 
 @Composable
-fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController: NavController, viewModel: MainViewModel) {
+fun PooperItem(isGetMore: Boolean = false, pooperId: Int? = null,navController: NavController, viewModel: MainViewModel) {
     var showDialog by remember { mutableStateOf(false) }
 
     if (isGetMore) {
-        // Afficher le bouton "Get More Poopers"
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .clickable {  navController.navigate("reward") } // Appelle onClick si c'est "Get More"
+                .clickable {  navController.navigate("reward") }
                 .padding(4.dp),
-            contentAlignment = Alignment.Center // Centre le contenu
+            contentAlignment = Alignment.Center
         ) {
-            // Afficher du texte pour "Get More"
             Text(
                 text = "Get More",
                 color = Color.Black,
@@ -144,16 +145,17 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController
             )
         }
     } else {
-        // Afficher l'image de pooper
-        val displayedImageResId = imageResId ?: R.drawable.base_3 // Image par défaut
+        val imageResId = viewModel.getImageById(pooperId!!)
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .clickable { showDialog = true }
+                .clickable {
+                    showDialog = true
+                }
                 .padding(4.dp)
         ) {
             Image(
-                painter = painterResource(id = displayedImageResId),
+                painter = painterResource(id = imageResId),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize()
             )
@@ -162,11 +164,14 @@ fun PooperItem(isGetMore: Boolean = false, imageResId: Int? = null,navController
         if (showDialog) {
             PopUpWithImage(
                 showDialog = showDialog,
-                imageId = displayedImageResId,
+                imageId = imageResId,
                 closeBtnText = "Choose this one",
-                onDismiss = {
+                onClose = {
                     showDialog = false
-                    //viewModel.changeProfileImage(displayedImageResId)
+                },
+                onClick = {
+                    viewModel.changeProfilImage(pooperId!!)
+                    showDialog = false
                 })
         }
     }

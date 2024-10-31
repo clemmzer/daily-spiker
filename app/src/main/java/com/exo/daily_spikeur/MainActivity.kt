@@ -4,6 +4,7 @@ package com.exo.daily_spikeur
 import CreatePoopAccountScreen
 import MainViewModel
 import MapScreen
+import android.content.pm.ActivityInfo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -21,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -41,11 +41,11 @@ import com.exo.daily_spikeur.data.repositories.impl.UserRepositoryImpl
 import com.exo.daily_spikeur.data.retrofit.ApiService
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.exo.daily_spikeur.data.models.pooperMap
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +71,7 @@ class MainActivity : ComponentActivity() {
             }
 
         }
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     }
 }
 
@@ -95,7 +96,6 @@ val apiService = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        // Valeur de retour
         retrofit.create(ApiService::class.java)
     }
 }
@@ -105,15 +105,13 @@ val apiService = module {
 @Composable
 fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
     val icons = listOf(
-        R.drawable.carte, // Remplacez par vos icônes dans drawable
+        R.drawable.carte,
         R.drawable.cadeaux,
-        R.drawable.podium, // Assurez-vous que c'est bien l'icône de la couronne
+        R.drawable.podium,
         R.drawable.photo
     )
     val selectedIndex = remember { mutableStateOf(0) }
-    val navController = rememberNavController() // Déplacer ici pour l'utiliser partout
-
-    val context = LocalContext.current
+    val navController = rememberNavController()
 
     Scaffold(
         topBar = {
@@ -121,30 +119,30 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
                 title = {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center // Centrer le contenu
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "Daily Spikeur",
-                            fontFamily = FontFamily(Font(R.font.test)), // Utilisez la police Rubik Bubbles
-                            color = Color.White // Couleur du texte
+                            fontFamily = FontFamily(Font(R.font.test)),
+                            color = Color.White
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
-                            painter = painterResource(id = viewModel.user.value.photo), // Remplacez par votre image
+                            painter = painterResource(id = pooperMap[viewModel.user.value.photo] ?: R.drawable.base_1), // Remplacez par votre image
                             contentDescription = "Profile Image",
-                            modifier = Modifier.size(50.dp) // Taille de l'image
+                            modifier = Modifier.size(50.dp)
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF916953)) // Couleur de la barre
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF916953))
             )
         },
         bottomBar = {
             NavigationBar(
-                containerColor = Color(0xFF916953) // Couleur de fond de la barre de navigation
+                containerColor = Color(0xFF916953)
             ) {
                 icons.forEachIndexed { index, icon ->
                     NavigationBarItem(
@@ -152,7 +150,7 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
                             Image(
                                 painter = painterResource(id = icon),
                                 contentDescription = null,
-                                modifier = Modifier.size(40.dp) // Taille de l'icône
+                                modifier = Modifier.size(40.dp)
                             )
                         },
 
@@ -164,13 +162,12 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
                                 1 -> navController.navigate("reward") // Écran des récompenses
                                 2 -> navController.navigate("ranking") // Écran de classement
                                 3 -> navController.navigate("profile") // Écran de profil
-                                // Ajoutez d'autres redirections ici si nécessaire
                                 else -> navController.navigate("map") // Redirection par défaut
                             }
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.White, // Couleur de l'icône sélectionnée
-                            unselectedIconColor = Color.White, // Couleur de l'icône non sélectionnée
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White,
                             indicatorColor = Color.Transparent
                         )
                     )
@@ -178,14 +175,13 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
             }
         }
     ) { innerPadding ->
-        val viewModel: MainViewModel = viewModel()
         NavHost(
             navController = navController,
             startDestination = "map",
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("map") { MapScreen() }
-            composable("reward") { RewardScreen() } // Écran des récompenses
+            composable("reward") { RewardScreen(viewModel) }
             composable("profile") { UserProfileScreen(viewModel, navController)  }
             composable("ranking") { RankingScreen()  }
             composable("connexion") { CreatePoopAccountScreen()  }

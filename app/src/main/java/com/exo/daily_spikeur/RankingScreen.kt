@@ -59,14 +59,13 @@ fun RankingScreen() {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Rankings List
         LazyColumn {
             item { RankingItem(name = "CLEMZER", points = "30000 POOPPOINTS (PP)", imageResId = R.drawable.honor_mabile) }
             item { RankingItem(name = "Erwan", points = "29999 POOPPOINTS (PP)", imageResId = R.drawable.legendary_2) }
             item { RankingItem(name = "LIES", points = "2888 POOPPOINTS (PP)", imageResId = R.drawable.honor_gambier) }
-            item { RankingItem(name = "YOLO WARRIOR", points = "20000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_6) }
-            item { RankingItem(name = "SYNTAX", points = "18000 POOPPOINTS (PP)", imageResId = R.drawable.honor_millat) }
-            item { RankingItem(name = "OTHEMGETTO", points = "10000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_5) }
+            item { RankingItem(name = "YOLO WARRRIOR", points = "20000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_6) }
+            item { RankingItem(name = "SYMTOX", points = "18000 POOPPOINTS (PP)", imageResId = R.drawable.honor_millat) }
+            item { RankingItem(name = "OTHEMGHETTO", points = "10000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_5) }
             item { RankingItem(name = "GAMBIER", points = "1000 POOPPOINTS (PP)", imageResId = R.drawable.honor_gambier) }
             item { RankingItem(name = "ORFEO", points = "10000 POOPPOINTS (PP)", imageResId = R.drawable.common_2) }
             item { RankingItem(name = "ALEX", points = "10000 POOPPOINTS (PP)", imageResId = R.drawable.legendary_3) }
@@ -89,7 +88,7 @@ fun RankingItem(name: String, points: String, imageResId: Int) {
         Image(
             painter = painterResource(id = imageResId),
             contentDescription = null,
-            modifier = Modifier.size(40.dp) // Taille de l'image
+            modifier = Modifier.size(40.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {

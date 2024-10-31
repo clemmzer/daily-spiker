@@ -1,4 +1,6 @@
 package com.exo.daily_spikeur
+import MainViewModel
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,19 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.random.Random
 
 @Composable
-fun RewardScreen() {
-    // Gestion des points et de l'image de récompense
-    var points by remember { mutableStateOf(100000) } // Remplace par 100 pour simuler l'atteinte du seuil
-    var currentReward by remember { mutableStateOf<Int?>(null) } // Image de profil par défaut
+fun RewardScreen(viewModel: MainViewModel) {
+
+    var points = viewModel.getPoints()
+    var currentReward by remember { mutableStateOf<Int?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -32,10 +34,9 @@ fun RewardScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Texte "Your Reward"
         Text(
             text = "CLICK TO GET REWARD",
-            fontFamily = FontFamily(Font(R.font.test)), // Remplacez par votre police
+            fontFamily = FontFamily(Font(R.font.test)),
             fontSize = 30.sp,
             color = Color(0xFF916953),
             textAlign = TextAlign.Center
@@ -43,24 +44,21 @@ fun RewardScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Image du coffre, clickable si les points atteignent 100
         Image(
-            painter = painterResource(id = if (points >= 100) R.drawable.capture_d_cran_2024_10_06___10_02_58 else R.drawable.no_reward),
+            painter = painterResource(id = if (points >= 100) R.drawable.reward_pack else R.drawable.no_reward),
             contentDescription = "Reward Image",
             modifier = Modifier
                 .size(200.dp)
                 .clickable(enabled = points >= 100) {
                     if (points >= 100) {
                         showDialog = true
-                        currentReward = openChest() // Ouvrir le coffre et obtenir une nouvelle image
-                        points -= 100 // Réinitialiser les points après l'ouverture du coffre
+                        currentReward = viewModel.openChest()
                     }
                 }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Affichage de la barre de progression sous forme de texte
         Text(
             text = "$points / 100",
             fontSize = 20.sp,
@@ -72,7 +70,6 @@ fun RewardScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Texte des probabilités
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -85,52 +82,29 @@ fun RewardScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Affichage de la récompense gagnée
-        if (currentReward != null) {
-            PopUpWithImage(
-                imageId = currentReward!!,
-                showDialog = showDialog,
-                closeBtnText = "Keep my Pooper",
-                onDismiss = { showDialog = false })
+        val context = LocalContext.current
+        if (currentReward == -1) {
+            Toast.makeText(
+                context,
+                "Vous possédez déjà tous les Poopers...\n Attendez la prochaine mise à jour !",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-    }
-}
-
-fun openChest(): Int {
-    val legendaryImages = listOf(
-        R.drawable.legendary_1, R.drawable.legendary_2, R.drawable.legendary_3,
-        R.drawable.legendary_4, R.drawable.legendary_5, R.drawable.legendary_6
-    )
-    val mythicImages = listOf(
-        R.drawable.mythic_1, R.drawable.mythic_2, R.drawable.mythic_3,
-        R.drawable.mythic_4, R.drawable.mythic_5, R.drawable.mythic_6,
-        R.drawable.mythic_7, R.drawable.mythic_8, R.drawable.mythic_9
-    )
-    val rareImages = listOf(
-        R.drawable.rare_1, R.drawable.rare_2, R.drawable.rare_3,
-        R.drawable.rare_4, R.drawable.rare_5, R.drawable.rare_6,
-        R.drawable.rare_7, R.drawable.rare_8
-    )
-    val commonImages = listOf(
-        R.drawable.common_1, R.drawable.common_2, R.drawable.common_3,
-        R.drawable.common_4, R.drawable.common_5, R.drawable.common_6,
-        R.drawable.common_7
-    )
-
-    val randomValue = Random.nextDouble()
-
-    return when {
-        randomValue <= 0.002 -> {
-            legendaryImages.random()
+        else if (currentReward == -2) {
+            Toast.makeText(
+                context,
+                "Une erreur inattendue est survenue lors de la sélection de l'image.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        randomValue <= 0.06 -> {
-            mythicImages.random()
-        }
-        randomValue <= 0.31 -> {
-            rareImages.random()
-        }
-        else -> {
-            commonImages.random()
+        else if (currentReward != null) {
+        PopUpWithImage(
+            imageId = viewModel.getImageById(currentReward!!),
+            showDialog = showDialog,
+            closeBtnText = "Keep my Pooper",
+            onClose = {
+                showDialog = false
+            })
         }
     }
 }

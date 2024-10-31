@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun PopUpWithImage(imageId: Int, showDialog: Boolean, closeBtnText: String, onDismiss: () -> Unit) {
+fun PopUpWithImage(imageId: Int, showDialog: Boolean, closeBtnText: String, onClose: () -> Unit, onClick: () -> Unit = onClose) {
 
     if (showDialog) {
-        Dialog(onDismissRequest = { onDismiss() }) {
+        Dialog(onDismissRequest = { onClose() }) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 color = Color(0xFFEDE1DB)
@@ -28,9 +28,8 @@ fun PopUpWithImage(imageId: Int, showDialog: Boolean, closeBtnText: String, onDi
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Image
                     Image(
-                        painter = painterResource(id = imageId), // Remplace par ton image
+                        painter = painterResource(id = imageId),
                         contentDescription = "Poop Image",
                         modifier = Modifier
                             .size(350.dp),
@@ -39,15 +38,13 @@ fun PopUpWithImage(imageId: Int, showDialog: Boolean, closeBtnText: String, onDi
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Bouton "Keep My Pooper"
                     Button(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF4B3827),
                             contentColor = Color.White
                         ),
                         onClick = {
-                            // Fermer le dialogue lorsqu'on clique sur le bouton
-                            onDismiss()
+                            onClick()
                         }
                     ) {
                         Text(text = closeBtnText)

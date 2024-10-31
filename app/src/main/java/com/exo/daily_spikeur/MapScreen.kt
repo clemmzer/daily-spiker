@@ -22,11 +22,12 @@ import com.google.maps.android.compose.*
 
 @Composable
 fun MapScreen() {
-    val lille = LatLng(50.633333, 3.066667)  // Coordonnées d'un lieu (ici Singapour)
+    val isa = LatLng(50.63412, 3.04698)
+    val isen = LatLng(50.63423, 3.04875)
+    val colson = LatLng(50.63342, 3.04868)
 
-    // Configuration de la caméra
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(lille, 15f)
+        position = CameraPosition.fromLatLngZoom(LatLng(50.63408, 3.04810), 17f)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -35,13 +36,25 @@ fun MapScreen() {
             cameraPositionState = cameraPositionState
         ) {
             MapMarker(
-                position = lille,
-                title = "Gambier",
+                position = isa,
+                title = "GAMBIER",
                 context = LocalContext.current,
-                iconResourceId = R.drawable.honor_gambier
+                iconResourceId = R.drawable.honor_gambier,
+            )
+            MapMarker(
+                position = isen,
+                title = "CLEMZER",
+                context = LocalContext.current,
+                iconResourceId = R.drawable.honor_mabile,
+            )
+            MapMarker(
+                position = colson,
+                title = "SYMTOX",
+                context = LocalContext.current,
+                iconResourceId = R.drawable.honor_millat,
             )
         }
-        // Texte centré sur la carte
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,7 +91,7 @@ fun MapMarker(
     @DrawableRes iconResourceId: Int
 ) {
     val icon = bitmapDescriptorFromVector(
-        context, iconResourceId
+        context, iconResourceId,
     )
 
     Marker(
@@ -93,18 +106,16 @@ fun bitmapDescriptorFromVector(
     vectorResId: Int,
 ): BitmapDescriptor? {
 
-    // retrieve the actual drawable
     val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
-    val width = 100
-    val height = 100
+    val width = 160
+    val height = 160
     drawable.setBounds(0, 0, width, height)
     val bm = Bitmap.createBitmap(
-        100,
-        100,
+        width,
+        height,
         Bitmap.Config.ARGB_8888
     )
 
-    // draw it onto the bitmap
     val canvas = android.graphics.Canvas(bm)
     drawable.draw(canvas)
     return BitmapDescriptorFactory.fromBitmap(bm)

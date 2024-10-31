@@ -18,7 +18,6 @@ import com.exo.daily_spikeur.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePoopAccountScreen() {
-    // Custom FontFamily for Rubik Bubbles (replace with actual font in assets folder)
     val customFont = FontFamily(Font(R.font.test))
 
     Column(
@@ -41,7 +40,6 @@ fun CreatePoopAccountScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Créer des états pour chaque champ de texte
         var email by remember { mutableStateOf("prenom.nom@gmail.com") }
         var password by remember { mutableStateOf("*************") }
         var nickname by remember { mutableStateOf("CLEMZOUZ") }
