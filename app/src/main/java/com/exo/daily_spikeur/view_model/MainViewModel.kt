@@ -3,7 +3,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.exo.daily_spikeur.R
 import com.exo.daily_spikeur.data.models.RarityEnum
 import com.exo.daily_spikeur.data.models.User
@@ -38,6 +37,7 @@ class MainViewModel(val userRepository: UserRepository) : ViewModel() {
         return image ?: R.drawable.base_1
     }
 
+    // Pourrait servir dans le futur pour afficher tous les skins disponible
     fun getImagesIdByRarity(rarity: RarityEnum): IntArray {
         var images: IntArray = intArrayOf()
         viewModelScope.launch {

@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.exo.daily_spikeur.ui.theme.DailyspikeurTheme
-import com.exo.daily_spikeur.R
 
 class RankingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

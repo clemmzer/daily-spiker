@@ -7,7 +7,3 @@ interface ApiService {
     @GET("user")
     suspend fun getUser(): User
 }
-
-data class CreateUserRequest(
-    val name: String,
-)

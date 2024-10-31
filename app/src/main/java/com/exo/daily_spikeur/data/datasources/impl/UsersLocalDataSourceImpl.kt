@@ -1,6 +1,5 @@
 package com.exo.daily_spikeur.data.datasources.impl
 
-import com.exo.daily_spikeur.R
 import com.exo.daily_spikeur.data.datasources.UsersLocalDataSource
 import com.exo.daily_spikeur.data.models.RarityEnum
 import com.exo.daily_spikeur.data.models.User
@@ -19,7 +18,6 @@ class UsersLocalDataSourceImpl : UsersLocalDataSource {
             RarityEnum.MYTHIC -> intArrayOf(19, 20, 21, 22, 23, 24, 25, 26, 27)
             RarityEnum.LEGENDARY -> intArrayOf(28, 29, 30, 31, 32, 33)
             RarityEnum.HONOR -> intArrayOf(34, 35, 36)
-            else -> pooperMap.values.toIntArray()
         }
         return poopers
     }
@@ -32,15 +30,18 @@ class UsersLocalDataSourceImpl : UsersLocalDataSource {
 
         val availableImagesWithProbabilities = mutableListOf<Pair<List<Int>, Double>>()
 
+        // Applique les probabilités par défaut
         if (legendaryImages.isNotEmpty()) availableImagesWithProbabilities.add(legendaryImages to 0.005)
         if (mythicImages.isNotEmpty()) availableImagesWithProbabilities.add(mythicImages to 0.055)
         if (rareImages.isNotEmpty()) availableImagesWithProbabilities.add(rareImages to 0.25)
         if (commonImages.isNotEmpty()) availableImagesWithProbabilities.add(commonImages to 0.69)
 
+
         if (availableImagesWithProbabilities.isEmpty()) {
             return -1 // Une gestion des erreurs avec un enum serait plus pertinent
         }
 
+        // Pondère les probabilités en fonction du nombre de skins restant par type de rareté
         val totalProbability = availableImagesWithProbabilities.sumOf { it.second }
         val normalizedImagesWithProbabilities = availableImagesWithProbabilities.map { (images, probability) ->
             images to (probability / totalProbability)
@@ -49,6 +50,7 @@ class UsersLocalDataSourceImpl : UsersLocalDataSource {
         val randomValue = Random.nextDouble()
         var accumulatedProbability = 0.0
 
+        // On tire au sort un skin selon le nombre aléatoire tiré et les probabilités d'apparition
         for ((images, probability) in normalizedImagesWithProbabilities) {
             accumulatedProbability += probability
             if (randomValue <= accumulatedProbability) {

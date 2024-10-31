@@ -131,7 +131,7 @@ fun ScaffoldWithBottomNav(viewModel: MainViewModel) {
                 actions = {
                     IconButton(onClick = {  navController.navigate("profile") }) {
                         Image(
-                            painter = painterResource(id = pooperMap[viewModel.user.value.photo] ?: R.drawable.base_1), // Remplacez par votre image
+                            painter = painterResource(id = pooperMap[viewModel.user.value.photo] ?: R.drawable.base_1),
                             contentDescription = "Profile Image",
                             modifier = Modifier.size(50.dp)
                         )
