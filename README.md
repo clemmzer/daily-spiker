@@ -1,4 +1,4 @@
-# Daily Spiker
+# Daily Spiker 💩
 
 **Daily Spiker** est une application ambitieuse qui rend les activités du quotidien plus divertissantes ! Grâce à cette application, vous pouvez :
 
